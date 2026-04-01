@@ -28,6 +28,13 @@ import { HomeSlider } from '@/schemas/HomeSlider/global';
 
 /* * */
 
+<<<<<<< HEAD
+import { accordionFields } from './fields/accordion';
+import { galleryFields } from './fields/gallery';
+import { linkFields } from './fields/link';
+import { videoFields } from './fields/video';
+import { Videos } from './schemas/Videos/collection';
+=======
 import { accordionFields } from '@/fields/accordion';
 import { galleryFields } from '@/fields/gallery';
 import { linkFields } from '@/fields/link';
@@ -93,6 +100,7 @@ const richTextBlocks: Block[] = [
 ];
 
 const lexicalEditorConfig = createLexicalConfig(richTextBlocks);
+>>>>>>> staging
 
 /* * */
 
@@ -123,7 +131,7 @@ export default buildConfig({
 		user: 'users',
 	},
 
-	collections: [Campaigns, Articles, CaseStudies, Media, News, Topics, Users, KnowledgeBase, Notes],
+	collections: [Campaigns, Articles, CaseStudies, Media, News, Topics, Users, KnowledgeBase, Notes, Videos],
 
 	csrf: [
 		getPublicVariable('server_url_backoffice').replace(/\/$/, ''),
