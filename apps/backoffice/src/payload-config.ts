@@ -28,13 +28,6 @@ import { HomeSlider } from '@/schemas/HomeSlider/global';
 
 /* * */
 
-<<<<<<< HEAD
-import { accordionFields } from './fields/accordion';
-import { galleryFields } from './fields/gallery';
-import { linkFields } from './fields/link';
-import { videoFields } from './fields/video';
-import { Videos } from './schemas/Videos/collection';
-=======
 import { accordionFields } from '@/fields/accordion';
 import { galleryFields } from '@/fields/gallery';
 import { linkFields } from '@/fields/link';
@@ -47,6 +40,7 @@ import { TwoColumnsTextBlock } from '@/lexical/layout/two-columns-text';
 import { TwoColumnsTextImageBlock } from '@/lexical/layout/two-columns-text-image';
 
 import { spacerFields } from './fields/spacer';
+import { Videos } from './schemas/Videos/collection';
 
 /* * */
 
@@ -100,7 +94,6 @@ const richTextBlocks: Block[] = [
 ];
 
 const lexicalEditorConfig = createLexicalConfig(richTextBlocks);
->>>>>>> staging
 
 /* * */
 
