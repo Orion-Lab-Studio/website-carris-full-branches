@@ -76,6 +76,7 @@ export interface Config {
     users: User;
     'knowledge-base': KnowledgeBase;
     notes: Note;
+    videos: Video;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -92,6 +93,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     'knowledge-base': KnowledgeBaseSelect<false> | KnowledgeBaseSelect<true>;
     notes: NotesSelect<false> | NotesSelect<true>;
+    videos: VideosSelect<false> | VideosSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -227,6 +229,10 @@ export interface Article {
      * Breve descrição sobre o autor.
      */
     bio?: string | null;
+    /**
+     * Se este artigo foi escrito por um especialista, lembre-se de marcar para que possa ser entregue conteúdos de especialistas separadamente.
+     */
+    expertAuthor: boolean;
     social?: {
       linkedin?: string | null;
       twitter?: string | null;
@@ -402,6 +408,55 @@ export interface Note {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos".
+ */
+export interface Video {
+  id: string;
+  title: string;
+  /**
+   * URL única para este vídeo. Será gerada automaticamente a partir do título se deixado em branco.
+   */
+  slug: string;
+  /**
+   * Resumo curto do vídeo que poderá ser enviado para leitores de tela, ou seções onde uma decrição for necessária.
+   */
+  description?: string | null;
+  /**
+   * Legenda que aparecerá em relação a thumbnail, será utilizada para acessibilidade e para leitores de tela.
+   */
+  thumbnailCaptions?: string | null;
+  author: {
+    picture?: (string | null) | Media;
+    name: string;
+    role: string;
+    /**
+     * Breve descrição sobre o autor.
+     */
+    bio?: string | null;
+    /**
+     * Se este artigo foi escrito por um especialista, lembre-se de marcar para que possa ser entregue conteúdos de especialistas separadamente.
+     */
+    expertAuthor: boolean;
+    social?: {
+      linkedin?: string | null;
+      twitter?: string | null;
+      email?: string | null;
+    };
+  };
+  type: 'tecnologia' | 'operacao' | 'sustentabilidade' | 'comunicacao';
+  video: string | Media;
+  thumbnail: string | Media;
+  status: 'draft' | 'published';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+  };
+  publishedAt: string;
+  updatedAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -459,6 +514,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'notes';
         value: string | Note;
+      } | null)
+    | ({
+        relationTo: 'videos';
+        value: string | Video;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -539,6 +598,7 @@ export interface ArticlesSelect<T extends boolean = true> {
         name?: T;
         role?: T;
         bio?: T;
+        expertAuthor?: T;
         social?:
           | T
           | {
@@ -692,6 +752,45 @@ export interface NotesSelect<T extends boolean = true> {
         ogImage?: T;
       };
   authors?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos_select".
+ */
+export interface VideosSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  thumbnailCaptions?: T;
+  author?:
+    | T
+    | {
+        picture?: T;
+        name?: T;
+        role?: T;
+        bio?: T;
+        expertAuthor?: T;
+        social?:
+          | T
+          | {
+              linkedin?: T;
+              twitter?: T;
+              email?: T;
+            };
+      };
+  type?: T;
+  video?: T;
+  thumbnail?: T;
+  status?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+      };
   publishedAt?: T;
   updatedAt?: T;
 }

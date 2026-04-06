@@ -40,6 +40,7 @@ import { TwoColumnsTextBlock } from '@/lexical/layout/two-columns-text';
 import { TwoColumnsTextImageBlock } from '@/lexical/layout/two-columns-text-image';
 
 import { spacerFields } from './fields/spacer';
+import { Videos } from './schemas/Videos/collection';
 
 /* * */
 
@@ -123,7 +124,7 @@ export default buildConfig({
 		user: 'users',
 	},
 
-	collections: [Campaigns, Articles, CaseStudies, Media, News, Topics, Users, KnowledgeBase, Notes],
+	collections: [Campaigns, Articles, CaseStudies, Media, News, Topics, Users, KnowledgeBase, Notes, Videos],
 
 	csrf: [
 		getPublicVariable('server_url_backoffice').replace(/\/$/, ''),
