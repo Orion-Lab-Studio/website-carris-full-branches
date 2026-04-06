@@ -70,6 +70,7 @@ export interface Config {
     campaigns: Campaign;
     articles: Article;
     'case-studies': CaseStudy;
+    interviews: Interview;
     media: Media;
     news: News;
     topics: Topic;
@@ -87,6 +88,7 @@ export interface Config {
     campaigns: CampaignsSelect<false> | CampaignsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     'case-studies': CaseStudiesSelect<false> | CaseStudiesSelect<true>;
+    interviews: InterviewsSelect<false> | InterviewsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     news: NewsSelect<false> | NewsSelect<true>;
     topics: TopicsSelect<false> | TopicsSelect<true>;
@@ -239,7 +241,6 @@ export interface Article {
       email?: string | null;
     };
   };
-  publishDate: string;
   status: 'draft' | 'published';
   seo?: {
     metaTitle?: string | null;
@@ -260,6 +261,36 @@ export interface CaseStudy {
   is_enabled: boolean;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "interviews".
+ */
+export interface Interview {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  host: {
+    name: string;
+    role: string;
+    picture?: (string | null) | Media;
+    description?: string | null;
+    social?: {
+      linkedin?: string | null;
+      twitter?: string | null;
+      email?: string | null;
+    };
+  };
+  guest: {
+    name: string;
+    role: string;
+    picture?: (string | null) | Media;
+  };
+  audio?: (string | null) | Media;
+  status: 'draft' | 'published';
+  publishedAt: string;
+  updatedAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -492,6 +523,10 @@ export interface PayloadLockedDocument {
         value: string | CaseStudy;
       } | null)
     | ({
+        relationTo: 'interviews';
+        value: string | Interview;
+      } | null)
+    | ({
         relationTo: 'media';
         value: string | Media;
       } | null)
@@ -607,7 +642,6 @@ export interface ArticlesSelect<T extends boolean = true> {
               email?: T;
             };
       };
-  publishDate?: T;
   status?: T;
   seo?:
     | T
@@ -629,6 +663,41 @@ export interface CaseStudiesSelect<T extends boolean = true> {
   is_enabled?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "interviews_select".
+ */
+export interface InterviewsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  host?:
+    | T
+    | {
+        name?: T;
+        role?: T;
+        picture?: T;
+        description?: T;
+        social?:
+          | T
+          | {
+              linkedin?: T;
+              twitter?: T;
+              email?: T;
+            };
+      };
+  guest?:
+    | T
+    | {
+        name?: T;
+        role?: T;
+        picture?: T;
+      };
+  audio?: T;
+  status?: T;
+  publishedAt?: T;
+  updatedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
