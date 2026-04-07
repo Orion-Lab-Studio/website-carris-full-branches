@@ -241,6 +241,7 @@ export interface Article {
       email?: string | null;
     };
   };
+  publishDate: string;
   status: 'draft' | 'published';
   seo?: {
     metaTitle?: string | null;
@@ -288,6 +289,11 @@ export interface Interview {
     picture?: (string | null) | Media;
   };
   audio?: (string | null) | Media;
+  type: 'tecnologia' | 'operacao' | 'sustentabilidade' | 'comunicacao';
+  /**
+   * Tempo estimado de leitura em minutos.
+   */
+  readTime: number;
   status: 'draft' | 'published';
   publishedAt: string;
   updatedAt: string;
@@ -642,6 +648,7 @@ export interface ArticlesSelect<T extends boolean = true> {
               email?: T;
             };
       };
+  publishDate?: T;
   status?: T;
   seo?:
     | T
@@ -695,6 +702,8 @@ export interface InterviewsSelect<T extends boolean = true> {
         picture?: T;
       };
   audio?: T;
+  type?: T;
+  readTime?: T;
   status?: T;
   publishedAt?: T;
   updatedAt?: T;

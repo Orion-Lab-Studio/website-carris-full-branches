@@ -118,9 +118,6 @@ export const Interviews: CollectionConfig = {
 					type: 'text',
 				},
 				{
-					filterOptions: {
-						mimeType: { contains: 'image' },
-					},
 					label: 'Foto',
 					name: 'picture',
 					relationTo: 'media',
@@ -143,7 +140,45 @@ export const Interviews: CollectionConfig = {
 			required: false,
 			type: 'upload',
 		},
-
+		{
+			admin: {
+				position: 'sidebar',
+			},
+			label: 'Tipo',
+			name: 'type',
+			options: [
+				{
+					label: 'Tecnologia',
+					value: 'tecnologia',
+				},
+				{
+					label: 'Operação',
+					value: 'operacao',
+				},
+				{
+					label: 'Sustentabilidade',
+					value: 'sustentabilidade',
+				},
+				{
+					label: 'Comunicação',
+					value: 'comunicacao',
+				},
+			],
+			required: true,
+			type: 'select',
+		},
+		{
+			admin: {
+				description: 'Tempo estimado de leitura em minutos.',
+				position: 'sidebar',
+			},
+			defaultValue: 5,
+			label: 'Tempo de Leitura (min)',
+			min: 1,
+			name: 'readTime',
+			required: true,
+			type: 'number',
+		},
 		{
 			admin: {
 				position: 'sidebar',
