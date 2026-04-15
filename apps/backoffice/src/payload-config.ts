@@ -168,6 +168,7 @@ export default buildConfig({
 					secretAccessKey: process.env.OCI_S3_SECRET_ACCESS_KEY ?? 'placeholder',
 				},
 				endpoint: process.env.OCI_S3_ENDPOINT ?? 'https://placeholder.endpoint.com',
+				forcePathStyle: true,
 				region: process.env.OCI_S3_REGION ?? 'placeholder',
 				requestHandler: {
 					connectionTimeout: 5_000,

@@ -142,6 +142,16 @@ export const Interviews: CollectionConfig = {
 		},
 		{
 			admin: {
+				description:
+					'Conteúdo do artigo em formato Markdown. Suporta títulos (##), listas, links, citações e muito mais.',
+			},
+			label: 'Conteúdo (Markdown)',
+			name: 'content',
+			required: true,
+			type: 'textarea',
+		},
+		{
+			admin: {
 				position: 'sidebar',
 			},
 			label: 'Tipo',

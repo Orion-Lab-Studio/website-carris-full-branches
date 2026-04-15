@@ -289,6 +289,10 @@ export interface Interview {
     picture?: (string | null) | Media;
   };
   audio?: (string | null) | Media;
+  /**
+   * Conteúdo do artigo em formato Markdown. Suporta títulos (##), listas, links, citações e muito mais.
+   */
+  content: string;
   type: 'tecnologia' | 'operacao' | 'sustentabilidade' | 'comunicacao';
   /**
    * Tempo estimado de leitura em minutos.
@@ -702,6 +706,7 @@ export interface InterviewsSelect<T extends boolean = true> {
         picture?: T;
       };
   audio?: T;
+  content?: T;
   type?: T;
   readTime?: T;
   status?: T;
