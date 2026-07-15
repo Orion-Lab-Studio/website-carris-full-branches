@@ -1,5 +1,6 @@
 import payloadConfig from '@/payload-config';
 import { getPublicHeaders } from '@/utils/get-public-headers';
+import { resolveListFilter } from '@/utils/resolve-list-filter';
 import { resolveSpecialSeriesFilter } from '@/utils/resolve-special-series-filter';
 import { getPayload, type Where } from 'payload';
 
@@ -19,6 +20,7 @@ export const GET = async (request: Request) => {
 	const expertArticle = JSON.parse(searchParams.get('expert-article') ?? 'false');
 
 	const payload = await getPayload({ config: payloadConfig });
+	const typeFilter = resolveListFilter(type);
 	const specialSeriesFilter = await resolveSpecialSeriesFilter(payload, specialSeries);
 
 	//
@@ -26,7 +28,7 @@ export const GET = async (request: Request) => {
 
 	const whereClause: Where = {
 		status: { equals: 'published' },
-		...(type && { type: { in: type } }),
+		...(typeFilter.length && { type: { in: typeFilter } }),
 		...(specialSeriesFilter.length && { specialSeries: { in: specialSeriesFilter } }),
 		...(expertArticle && { 'author.expertAuthor': { equals: expertArticle } }),
 	};
