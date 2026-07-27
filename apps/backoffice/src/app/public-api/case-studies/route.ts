@@ -33,7 +33,7 @@ export const GET = async (request: Request) => {
 
 	const foundCaseStudies = await payload.find({
 		collection: 'case-studies',
-		depth: 0,
+		depth: 2,
 		limit,
 		page,
 		sort: '-publishDate',

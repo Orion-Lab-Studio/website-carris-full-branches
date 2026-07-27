@@ -40,7 +40,7 @@ export const GET = async (request: Request) => {
 
 	const foundInterviews = await payload.find({
 		collection: 'interviews',
-		depth: 0,
+		depth: 2,
 		limit,
 		page,
 		sort: '-publishDate',

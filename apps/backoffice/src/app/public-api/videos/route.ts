@@ -44,7 +44,7 @@ export const GET = async (request: Request) => {
 
 	const foundVideos = await payload.find({
 		collection: 'videos',
-		depth: 0,
+		depth: 2,
 		limit,
 		page,
 		sort: '-publishDate',

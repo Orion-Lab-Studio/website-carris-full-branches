@@ -17,7 +17,7 @@ export const GET = async (_request: Request, { params }: { params: Promise<{ slu
 
 	const foundVideos = await payload.find({
 		collection: 'videos',
-		depth: 0,
+		depth: 2,
 		draft: false,
 		limit: 1,
 		where: {

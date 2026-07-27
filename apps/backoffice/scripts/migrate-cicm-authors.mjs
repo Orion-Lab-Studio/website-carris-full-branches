@@ -136,10 +136,12 @@ async function main() {
 				summary.reusedAuthors += 1;
 				if (profile.picture && !author.picture) {
 					if (APPLY) {
+						const updatedAt = new Date();
 						await authors.updateOne(
 							{ _id: author._id },
-							{ $set: { migrationFingerprint: profileFingerprint, picture: profile.picture } },
+							{ $set: { migrationFingerprint: profileFingerprint, picture: profile.picture, updatedAt } },
 						);
+						author.updatedAt = updatedAt;
 					}
 					author.picture = profile.picture;
 					summary.repairedPictures += 1;
@@ -153,10 +155,13 @@ async function main() {
 					summary.reusedAuthors += 1;
 				}
 				else {
+					const now = new Date();
 					author = {
 						...profile,
+						createdAt: now,
 						migrationFingerprint: profileFingerprint,
 						slug: slugResolution.slug,
+						updatedAt: now,
 					};
 					if (APPLY) {
 						const result = await authors.insertOne(author);

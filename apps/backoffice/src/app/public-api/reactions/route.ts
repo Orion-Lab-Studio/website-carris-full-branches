@@ -1,23 +1,24 @@
 import payloadConfig from '@/payload-config';
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { getPayload, type Where } from 'payload';
+import { z } from 'zod';
 
 const COOKIE_NAME = 'cicm_visitor';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 const LOCAL_CICM_ORIGIN = 'http://localhost:3000';
+const contentTypes = ['article', 'case-study', 'interview', 'video'] as const;
 const contentCollections = {
 	'article': 'articles',
 	'case-study': 'case-studies',
 	'interview': 'interviews',
 	'video': 'videos',
 } as const;
+const reactionRequestSchema = z.object({
+	contentId: z.string().trim().min(1),
+	contentType: z.enum(contentTypes),
+}).strict();
 
-type ContentType = keyof typeof contentCollections;
-
-interface ReactionRequest {
-	contentId?: unknown
-	contentType?: unknown
-}
+type ContentType = (typeof contentTypes)[number];
 
 export const GET = async (request: Request) => getReactionResponse(request);
 export const POST = async (request: Request) => getReactionResponse(request, true);
@@ -28,6 +29,11 @@ export const OPTIONS = (request: Request) => new Response(null, {
 });
 
 async function getReactionResponse(request: Request, liked?: boolean): Promise<Response> {
+	if (liked !== undefined) {
+		const requestError = validateMutationRequest(request);
+		if (requestError) return requestError;
+	}
+
 	const input = liked === undefined
 		? Object.fromEntries(new URL(request.url).searchParams)
 		: await request.json().catch(() => ({}));
@@ -104,10 +110,9 @@ async function deleteReactionIfPresent(payload: Awaited<ReturnType<typeof getPay
 	}
 }
 
-function parseReactionRequest(value: ReactionRequest): undefined | { contentId: string, contentType: ContentType } {
-	if (typeof value.contentId !== 'string' || !value.contentId.trim()) return undefined;
-	if (typeof value.contentType !== 'string' || !(value.contentType in contentCollections)) return undefined;
-	return { contentId: value.contentId.trim(), contentType: value.contentType as ContentType };
+function parseReactionRequest(value: unknown): undefined | { contentId: string, contentType: ContentType } {
+	const parsed = reactionRequestSchema.safeParse(value);
+	return parsed.success ? parsed.data : undefined;
 }
 
 function getReactionWhere(reaction: { contentId: string, contentType: ContentType }, visitorHash?: string): Where {
@@ -141,6 +146,25 @@ function getReactionHeaders(request: Request, cookie?: string): Headers {
 	if (origin && getAllowedCicmOrigins().has(origin)) headers.set('Access-Control-Allow-Origin', origin);
 	if (cookie) headers.set('Set-Cookie', cookie);
 	return headers;
+}
+
+function validateMutationRequest(request: Request): Response | undefined {
+	const origin = request.headers.get('origin');
+	const requestOrigin = new URL(request.url).origin;
+	if (origin && origin !== requestOrigin && !getAllowedCicmOrigins().has(origin)) {
+		return Response.json(
+			{ error: 'Origem não autorizada.' },
+			{ headers: getReactionHeaders(request), status: 403 },
+		);
+	}
+
+	const contentType = request.headers.get('content-type')?.toLowerCase();
+	if (!contentType?.startsWith('application/json')) {
+		return Response.json(
+			{ error: 'O pedido deve usar application/json.' },
+			{ headers: getReactionHeaders(request), status: 415 },
+		);
+	}
 }
 
 function getAllowedCicmOrigins(): Set<string> {
