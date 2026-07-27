@@ -16,6 +16,31 @@ interface InterviewBranchData {
 	contentFormat?: 'audio' | 'transcript'
 }
 
+const AUDIO_MIME_TYPES = [
+	'audio/aac',
+	'audio/flac',
+	'audio/m4a',
+	'audio/mp3',
+	'audio/mp4',
+	'audio/mpeg',
+	'audio/ogg',
+	'audio/wav',
+	'audio/webm',
+	'audio/x-m4a',
+	'audio/x-wav',
+] as const;
+
+function getMediaMimeType(value: unknown): string | undefined {
+	if (!value || typeof value !== 'object' || !('mimeType' in value)) return undefined;
+	return typeof value.mimeType === 'string' ? value.mimeType : undefined;
+}
+
+function getMediaId(value: unknown): number | string | undefined {
+	if (typeof value === 'number' || typeof value === 'string') return value;
+	if (!value || typeof value !== 'object' || !('id' in value)) return undefined;
+	return typeof value.id === 'number' || typeof value.id === 'string' ? value.id : undefined;
+}
+
 /* * */
 
 export const Interviews: CollectionConfig = {
@@ -113,57 +138,11 @@ export const Interviews: CollectionConfig = {
 			type: 'group',
 		},
 		{
-			fields: [
-				{
-					label: 'Foto',
-					name: 'picture',
-					relationTo: 'media',
-					type: 'upload',
-				},
-				{
-					label: 'Nome',
-					name: 'name',
-					type: 'text',
-				},
-				{
-					label: 'Cargo/Função',
-					name: 'role',
-					type: 'text',
-				},
-				{
-					admin: {
-						description: 'Breve descrição sobre o host.',
-					},
-					label: 'Biografia',
-					name: 'bio',
-					type: 'textarea',
-				},
-				{
-					fields: [
-						{
-							label: 'LinkedIn',
-							name: 'linkedin',
-							type: 'text',
-						},
-						{
-							label: 'X (Twitter)',
-							name: 'twitter',
-							type: 'text',
-						},
-						{
-							label: 'Email',
-							name: 'email',
-							type: 'email',
-						},
-					],
-					label: 'Redes Sociais',
-					name: 'social',
-					type: 'group',
-				},
-			],
-			label: 'Host',
-			name: 'host',
-			type: 'group',
+			hasMany: true,
+			label: 'Autores',
+			name: 'authors',
+			relationTo: 'authors',
+			type: 'relationship',
 		},
 		{
 			admin: {
@@ -173,30 +152,44 @@ export const Interviews: CollectionConfig = {
 			},
 			filterOptions: {
 				mimeType: {
-					in: [
-						'audio/aac',
-						'audio/flac',
-						'audio/m4a',
-						'audio/mp3',
-						'audio/mp4',
-						'audio/mpeg',
-						'audio/ogg',
-						'audio/wav',
-						'audio/webm',
-						'audio/x-m4a',
-						'audio/x-wav',
-					],
+					in: [...AUDIO_MIME_TYPES],
 				},
 			},
 			label: 'Ficheiro de Áudio',
 			name: 'audioFile',
 			relationTo: 'media',
 			type: 'upload',
-			validate: (value, { data }) => {
+			validate: async (value, { data, req }) => {
 				const branchData = data as InterviewBranchData;
 				if (branchData.contentFormat !== 'audio') return true;
-				if (value || branchData.audioUrl) return true;
-				return 'Adicione um ficheiro de áudio ou uma URL externa.';
+				if (!value) {
+					if (branchData.audioUrl) return true;
+					return 'Adicione um ficheiro de áudio ou uma URL externa.';
+				}
+
+				let mimeType = getMediaMimeType(value);
+				const mediaId = getMediaId(value);
+
+				if (!mimeType && mediaId) {
+					try {
+						const media = await req.payload.findByID({
+							collection: 'media',
+							id: mediaId,
+							req,
+						});
+						mimeType = media.mimeType ?? undefined;
+					}
+					catch {
+						return 'Não foi possível validar o ficheiro de áudio selecionado.';
+					}
+				}
+
+				if (mimeType && AUDIO_MIME_TYPES.includes(mimeType as (typeof AUDIO_MIME_TYPES)[number])) {
+					return true;
+				}
+
+				if (!mimeType) return 'Não foi possível validar o tipo do ficheiro de áudio.';
+				return 'Selecione um ficheiro num formato de áudio suportado.';
 			},
 		},
 		{

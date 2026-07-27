@@ -1,6 +1,7 @@
 import payloadConfig from '@/payload-config';
 import { getPublicHeaders } from '@/utils/get-public-headers';
 import { resolveListFilter } from '@/utils/resolve-list-filter';
+import { resolvePublicContentFilter } from '@/utils/resolve-public-content-filter';
 import { getPayload, type Where } from 'payload';
 
 /* * */
@@ -18,12 +19,14 @@ export const GET = async (request: Request) => {
 
 	const payload = await getPayload({ config: payloadConfig });
 	const typeFilter = resolveListFilter(type);
+	const publicContentFilter = resolvePublicContentFilter(searchParams);
 
 	//
 	// B. Build the where clause, optionally filtering by type.
 
 	const whereClause: Where = {
 		status: { equals: 'published' },
+		...publicContentFilter,
 		...(typeFilter.length && { type: { in: typeFilter } }),
 	};
 
