@@ -47,7 +47,7 @@
 		},
 		"operators": {
 			"atlantic_ferries": "Atlantic Ferries (barcos de Tróia)",
-			"ccfl": "Carris municipal",
+			"ccfl": "CARRIS",
 			"cmet": "CMET",
 			"cp": "CP Comboios de Portugal",
 			"fertagus": "Fertagus (comboio da Ponte)",
@@ -1090,21 +1090,21 @@
 		"Page": {
 			"heading": "Perdidos e Achados",
 			"operator_sections": {
-				"41": {
-					"description": "Envie um email para passageiro@viacaoalvorada.pt com informação da linha utilizada, hora e descrição do objecto. Se possível, inclua o número ou matrícula do veículo.",
-					"title": "Área 1 | Viação Alvorada"
+				"A2L1N": {
+					"description": "Preencha o Formulário Online disponibilizado no site do operador ou envie email para passageiros@alsa.com com informação da linha utilizada, hora e descrição do objeto. Se possível, inclua o número ou matrícula do veículo.",
+					"title": "Área 4 | Alsa Todi"
 				},
-				"42": {
+				"BNA17": {
 					"description": "Preencha o Formulário Online disponibilizado no site do operador com informação da linha utilizada, hora e descrição do objeto. Se possível, inclua o número ou matrícula do veículo.",
 					"title": "Área 2 | Rodoviária de Lisboa"
 				},
-				"43": {
+				"LA77N": {
+					"description": "Envie um email para passageiro@viacaoalvorada.pt com informação da linha utilizada, hora e descrição do objecto. Se possível, inclua o número ou matrícula do veículo.",
+					"title": "Área 1 | Viação Alvorada"
+				},
+				"YA15B": {
 					"description": "Preencha o Formulário Online disponibilizado no site do operador com informação da linha utilizada, hora e descrição do objeto. Se possível, inclua o número ou matrícula do veículo.",
 					"title": "Área 3 | TST"
-				},
-				"44": {
-					"description": "Preencha o Formulário Online disponibilizado no site do operador ou envie email para passageiros@alsa.com com informação da linha utilizada, hora e descrição do objeto. Se possível, inclua o número ou matrícula do veículo.",
-					"title": "Área 4 | Alsa Todi"
 				}
 			},
 			"subheading": "O serviço de transporte da Carris Metropolitana é assegurado por 4 prestadores de serviço, cada um explorando a sua zona da área metropolitana de Lisboa, conforme a imagem seguinte. Por esta razão, a melhor forma de reaver o seu objeto é contactar o operador da área utilizada."
@@ -1498,12 +1498,12 @@
 			"44": "Alsa Todi"
 		},
 		"VehicleEmissionClass": {
-			"euro_1": "EURO 1",
-			"euro_2": "EURO 2",
-			"euro_3": "EURO 3",
-			"euro_4": "EURO 4",
-			"euro_5": "EURO 5",
-			"euro_6": "EURO 6"
+			"EURO_I": "EURO 1",
+			"EURO_II": "EURO 2",
+			"EURO_III": "EURO 3",
+			"EURO_IV": "EURO 4",
+			"EURO_V": "EURO 5",
+			"EURO_VI": "EURO 6"
 		},
 		"VehiclePropulsion": {
 			"diesel": "Diesel",
@@ -2017,12 +2017,20 @@
 		}
 	},
 	"stops": {
+		"NextArrivals": {
+			"arriving": "A chegar",
+			"hours": "h",
+			"minutes": "min"
+		},
 		"Page": {
 			"heading": "Pesquisar Paragens"
 		},
 		"Single": {
 			"heading": "Pesquisar Paragens",
 			"lines_that_pass_here": "Linhas que passam nesta paragem"
+		},
+		"StopsDetail": {
+			"title": "Paragem"
 		},
 		"StopsDetailAlerts": {
 			"heading": "Alertas ativos",
@@ -2036,14 +2044,6 @@
 				"line": "Linha"
 			}
 		},
-		"StopsDetailContentTimetableRealtime": {
-			"end_of_day": "Fim do Dia",
-			"no_service": "Sem Serviço Hoje",
-			"show_past_trips_toggle": {
-				"hide": "Esconder passagens anteriores",
-				"show": "Ver passagens anteriores"
-			}
-		},
 		"StopsDetailContentTimetableRow": {
 			"debug_modal": {
 				"title": "Estes dados representam trip IDs iguais para diferentes dias"
@@ -2053,9 +2053,16 @@
 			},
 			"open_line_page": "Ver percurso completo"
 		},
-		"StopsDetailContentTimetableSchedule": {
+		"StopsDetailViewTimetable": {
 			"end_of_day": "Fim do Dia",
-			"no_service": "Sem Serviço para o dia selecionado"
+			"no_service": "Sem Serviço para o dia selecionado",
+			"show_past_trips_toggle": {
+				"hide": "Esconder passagens anteriores",
+				"show": "Ver passagens anteriores"
+			}
+		},
+		"StopsDetailViewTimetableRow": {
+			"localities": "Passa por: {localities}"
 		},
 		"StopsListToolbar": {
 			"filters": {
