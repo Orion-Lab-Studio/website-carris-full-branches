@@ -47,6 +47,7 @@ import { CardBlock } from '@/lexical/layout/card';
 import { ThreeColumnsTextBlock } from '@/lexical/layout/three-columns-text';
 import { TwoColumnsTextBlock } from '@/lexical/layout/two-columns-text';
 import { TwoColumnsTextImageBlock } from '@/lexical/layout/two-columns-text-image';
+import { ensureDefaultInterviewAuthor } from '@/utils/default-interview-author';
 
 import { spacerFields } from './fields/spacer';
 import { Interviews } from './schemas/Interviews/collection';
@@ -168,6 +169,10 @@ export default buildConfig({
 		defaultLocale: 'pt-PT',
 		fallback: true,
 		locales: ['pt-PT', 'en'],
+	},
+
+	onInit: async (payload) => {
+		await ensureDefaultInterviewAuthor(payload);
 	},
 
 	plugins: [

@@ -716,6 +716,9 @@ export interface Interview {
     name: string;
     role: string;
   };
+  /**
+   * Por predefinição, é usado o autor Equipa Carris. Selecione outro autor para o substituir.
+   */
   authors?: (string | Author)[] | null;
   /**
    * Ficheiro de áudio da entrevista (upload direto).
@@ -733,23 +736,30 @@ export interface Interview {
    * Tempo estimado de leitura em minutos.
    */
   readTime?: number | null;
-  transcript?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
   /**
-   * Ficheiro PDF com a entrevista escrita completa.
+   * Cada entrada é uma fala. Em áudio, início e fim sincronizam o destaque com o leitor.
+   */
+  transcription?:
+    | {
+        speaker: 'host' | 'guest';
+        /**
+         * Sobrescreve o nome do orador, quando necessário.
+         */
+        speakerName?: string | null;
+        /**
+         * Segundo em que esta fala começa no áudio. Opcional em entrevistas escritas.
+         */
+        startTime?: number | null;
+        /**
+         * Segundo em que esta fala termina no áudio. Opcional em entrevistas escritas.
+         */
+        endTime?: number | null;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Ficheiro PDF com a transcrição completa.
    */
   transcriptPdf?: (string | null) | Media;
   publishDate: string;
@@ -1386,7 +1396,16 @@ export interface InterviewsSelect<T extends boolean = true> {
   audioUrl?: T;
   audioDuration?: T;
   readTime?: T;
-  transcript?: T;
+  transcription?:
+    | T
+    | {
+        speaker?: T;
+        speakerName?: T;
+        startTime?: T;
+        endTime?: T;
+        text?: T;
+        id?: T;
+      };
   transcriptPdf?: T;
   publishDate?: T;
   status?: T;

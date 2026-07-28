@@ -6,6 +6,7 @@ import { publishedAtField } from '@/fields/published-at';
 import { specialSeriesField } from '@/fields/special-series';
 import { subjectField } from '@/fields/subject';
 import { updatedAtField } from '@/fields/updated-at';
+import { ensureDefaultInterviewAuthor } from '@/utils/default-interview-author';
 import { slugify } from '@/utils/slugify';
 
 /* * */
@@ -14,6 +15,7 @@ interface InterviewBranchData {
 	audioFile?: unknown
 	audioUrl?: unknown
 	contentFormat?: 'audio' | 'transcript'
+	transcription?: unknown[]
 }
 
 const AUDIO_MIME_TYPES = [
@@ -138,6 +140,9 @@ export const Interviews: CollectionConfig = {
 			type: 'group',
 		},
 		{
+			admin: {
+				description: 'Por predefinição, é usado o autor Equipa Carris. Selecione outro autor para o substituir.',
+			},
 			hasMany: true,
 			label: 'Autores',
 			name: 'authors',
@@ -244,25 +249,73 @@ export const Interviews: CollectionConfig = {
 		},
 		{
 			admin: {
-				condition: (_, siblingData) => siblingData?.contentFormat === 'transcript',
+				components: {
+					beforeInput: ['@/components/TranscriptBulkImport#TranscriptBulkImport'],
+				},
+				description:
+					'Cada entrada é uma fala. Em áudio, início e fim sincronizam o destaque com o leitor.',
 			},
-			label: 'Escrita',
-			name: 'transcript',
-			type: 'richText',
-			validate: (value, { data }) => {
-				const branchData = data as InterviewBranchData;
-				if (branchData.contentFormat !== 'transcript') return true;
-				if (value) return true;
-				return 'O conteúdo da entrevista escrita é obrigatório.';
-			},
+			fields: [
+				{
+					label: 'Orador',
+					name: 'speaker',
+					options: [
+						{ label: 'Entrevistador', value: 'host' },
+						{ label: 'Convidado', value: 'guest' },
+					],
+					required: true,
+					type: 'select',
+				},
+				{
+					admin: { description: 'Sobrescreve o nome do orador, quando necessário.' },
+					label: 'Nome apresentado',
+					name: 'speakerName',
+					type: 'text',
+				},
+				{
+					admin: {
+						components: {
+							afterInput: ['@/components/AutoFillTranscriptStartTime#AutoFillTranscriptStartTime'],
+						},
+						description: 'Segundo em que esta fala começa no áudio. Opcional em entrevistas escritas.',
+					},
+					label: 'Início da fala (segundos)',
+					min: 0,
+					name: 'startTime',
+					type: 'number',
+				},
+				{
+					admin: {
+						description: 'Segundo em que esta fala termina no áudio. Opcional em entrevistas escritas.',
+					},
+					label: 'Fim da fala (segundos)',
+					min: 0,
+					name: 'endTime',
+					type: 'number',
+					validate: (value, { siblingData }) => {
+						if (value === undefined || value === null) return true;
+						if (typeof siblingData?.startTime !== 'number') return true;
+						return value >= siblingData.startTime || 'O fim deve ser igual ou posterior ao início.';
+					},
+				},
+				{
+					label: 'Texto',
+					name: 'text',
+					required: true,
+					type: 'textarea',
+				},
+			],
+			label: 'Transcrição',
+			minRows: 1,
+			name: 'transcription',
+			type: 'array',
 		},
 		{
 			admin: {
-				condition: (_, siblingData) => siblingData?.contentFormat === 'transcript',
-				description: 'Ficheiro PDF com a entrevista escrita completa.',
+				description: 'Ficheiro PDF com a transcrição completa.',
 				position: 'sidebar',
 			},
-			label: 'PDF da Escrita',
+			label: 'PDF da Transcrição',
 			name: 'transcriptPdf',
 			relationTo: 'media',
 			type: 'upload',
@@ -338,8 +391,6 @@ export const Interviews: CollectionConfig = {
 
 				if (data.contentFormat === 'audio') {
 					data.readTime = null;
-					data.transcript = null;
-					data.transcriptPdf = null;
 				}
 
 				if (data.contentFormat === 'transcript') {
@@ -350,13 +401,20 @@ export const Interviews: CollectionConfig = {
 			},
 		],
 		beforeValidate: [
-			async ({ data }) => {
+			async ({ data, operation, req }) => {
 				if (data.title && !data.slug) {
 					data.slug = slugify(data.title);
 				}
 				if (data.slug) {
 					data.slug = slugify(data.slug);
 				}
+
+				if (operation !== 'create' || (Array.isArray(data.authors) && data.authors.length > 0)) {
+					return;
+				}
+
+				const equipaCarris = await ensureDefaultInterviewAuthor(req.payload);
+				data.authors = [equipaCarris.id];
 			},
 		],
 	},
